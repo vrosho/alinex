@@ -1,0 +1,79 @@
+import java.util.Scanner;
+import java.util.Random;
+
+public class PasswordGenerator {
+	public static char[] getSpecialCharacters() {
+		final char[] SPECIAL_CHARS = {'!', '@', '#', '_', '.', '*'};    //просто для справки разберём, здесь массив со спец. символами
+		return SPECIAL_CHARS;                                           //return для того, чтобы мы могли этот массив получить
+	}
+
+	public static final String getValidPasswordCharacters() {
+		final String PASSWORD_CHARS = "abcdefghijklmnopqrstuvwyxzABCDEFGHIJKLMNOPQRSTUVEWXYZ0123456789";       //здесь строка просто символов, используемые в конце пароля
+		return PASSWORD_CHARS;                                                                              //при этом это именно не массив, а строка
+	}
+	
+	public static final String getAllFourLetterWords() {
+
+		final String FOUR_LETTER_WORDS =
+			"able bane barn bile blip boat bolt bran brat brim bulb "+
+			"bull burn cane card cart clan clip cold cone core dart "+
+			"deny dial dang dirk dolt door dote drip drop dupe each "+                  //здесь тоже строка огромная со словами из 4 букв
+			"earn easy fast fest file five flap flip flop foal folk "+                  //(не знаю, если честно, зачем именно строкой, но ладно)
+			"fort four full gave give gone grin hard hurt idle isle "+                  //возможно, чтобы проверить твои умения преобразования строки в массив
+			"join king knit knob land lane lard link list live long "+
+			"lung made main many mile mine moat mole mote mule nine "+
+			"norm note paid part pick pile ping pipe plan pole pong "+
+			"port prim pull quid quip quit rain rang redo ring ripe "+
+			"role root rote rung sand sang silk sing sink slam slow "+
+			"song sort spam sulk take tame tang tide tile time tint "+
+			"toll tone took tote trap trip turn undo vile volt vote "+
+			"wart wing woke wool wore writ zero zoom";
+	   return FOUR_LETTER_WORDS;
+	}
+
+	public static String createPassword() {
+		Random rand = new Random();                                         //создаём новый рандом
+		String password = "";                                               //создаём пустую строку пароля
+        String FOUR_LETTER_WORDS[] = getAllFourLetterWords().split(" ");    //преобразовываем строку слов из 4 букв в массив для удобства
+        char SPECIAL_CHARS[] = getSpecialCharacters();                      //создаём массив спец. символов
+        char PASSWORD_CHARS[] = getValidPasswordCharacters().toCharArray(); //создаём массив символов из строки
+        
+        password += FOUR_LETTER_WORDS[rand.nextInt(FOUR_LETTER_WORDS.length)];  //здесь создаём сам пароль, сначала добавляем в него слово из 4 букв
+        password += SPECIAL_CHARS[rand.nextInt(SPECIAL_CHARS.length)];          //потом добавляем один спец. символ
+        for (int i = 0; i < 5; i++) {
+            password += PASSWORD_CHARS[rand.nextInt(PASSWORD_CHARS.length)];    //и здесь добавляем 5 обычных символов к нему
+        }
+		
+		return password;        //возвращаем 
+	}
+
+    public static boolean isUniquePassword(String aPassword, String passwordList) {
+        return !(passwordList.contains(aPassword));                                 //проверка пароля на уникальность, сравнивая со списком паролей (изначально он пустой, поэтому первый пароль добавится в любом случае)
+    }
+
+	public static String addUniquePassword(String aPassword, String passwordList) {
+        return passwordList + " " + aPassword ;                                     //добавление как раз пароля в список уникальных (с пробелом, так как в задании так)
+	}
+	
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);       //по классике сканнер создаём
+		System.out.print("How many passwords do you want to generate? ");   //выдаём вопрос
+		int numPasswords = scanner.nextInt();       //создаём переменную с количеством паролей, которые надо сгенерировать
+		scanner.close();        //вот это необязательно, но это закрывает сканнер (вообще это нужно в больших проектах, поэтому можешь понемногу привыкать так писать)
+
+		String uniquePasswords = "";        //наш список уникальных паролей
+
+		int count = 1;                  //здесь цикл просто, который повторится столько раз, сколько ввёл пользователь
+		while(count <= numPasswords) {          //во время цикла создаётся пароль, проверяется на уникальность и, если проходит проверку, добавляется в список
+    	    String password = createPassword();
+    		if(isUniquePassword(password, uniquePasswords)) {
+    			uniquePasswords = addUniquePassword(password, uniquePasswords);
+    			System.out.println(count + " - " + password);       //и сразу делаем вывод этиъ паролей в красивом виде (не знаю зачем, можно просто через пробел)
+    			count++;
+    		}
+    		else {
+    			continue;           //если проверка не пройдена, используем continue
+    	    }
+		}
+	}
+}
